@@ -4,6 +4,7 @@ package com.violation;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -57,6 +58,16 @@ public class ViolationFinder {
 				CorrelationFileGenerator cfg = new CorrelationFileGenerator(project);
 				cfg.createCorrelationFile();
 				
+				//Step 5: combinates to One-File TOTAL
+				combineCorretionToOneFile();
+				
+				
+				
+				
+				
+				
+				
+				
 				
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
@@ -80,6 +91,45 @@ public class ViolationFinder {
 		}
 		return "";
 	}
+	
+	private static void combineCorretionToOneFile(){
+		boolean firstDone = false;
+		try {
+		PrintWriter pw = new PrintWriter("./projects/"+"/TOTAL/TOTAL_correlation.csv");
+		File file = new File("./projects");
+		String[] projects = file.list(new FilenameFilter() {
+			  @Override
+			  public boolean accept(File current, String name) {
+			    return new File(current, name).isDirectory();
+			  }
+			});
+		
+		for (String project : projects){
+			if (project.contains("TOTAL"))
+				continue;
+			String basePath = "./projects/";
+			List<String> lines = Files.readAllLines(Paths.get(new URI("file://"+basePath+"/"+project+"_correlation.csv")));
+			if (firstDone){
+				lines.remove(0);
+			}
+			else{
+				pw.println("project,"+lines.get(0));
+				lines.remove(0);
+				firstDone = true;
+			} 
+			for (String line : lines){
+				pw.println(project + ","+ line+",");
+			}
+			
+		}
+		pw.close();
+		} catch (IOException | URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
 	
 	/*
 	 * It gets the list of the projects.

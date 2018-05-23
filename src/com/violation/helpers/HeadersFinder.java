@@ -37,7 +37,7 @@ public class HeadersFinder {
 		listHeaders.add("git-changed-files");
 		for (String project : projects){
 	        try {
-	        	String newPath = project;
+	        	String newPath = "./projects/"+project;
 	            BufferedReader br = new BufferedReader(new FileReader(newPath));
 	            String s = br.readLine();
 	            s = s.replaceAll("\"", "");
