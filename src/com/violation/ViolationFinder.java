@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,6 +20,7 @@ import javax.swing.event.ListSelectionEvent;
 
 import com.violation.jiraAnalyser.Application;
 import com.violation.statistic.CorrelationFileGenerator;
+import com.violation.statistic.StdFileGenerator;
 
 public class ViolationFinder {
 	
@@ -57,38 +59,44 @@ public class ViolationFinder {
 				//Step 4: creates Correlation File per project
 				CorrelationFileGenerator cfg = new CorrelationFileGenerator(project);
 				cfg.createCorrelationFile();
-				
-				//Step 5: combinates to One-File TOTAL
-				combineCorretionToOneFile();
-				
-				
-				
-				
-				
-				
-				
-				
-				
+			
+			
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+		//Step 5: combinates to One-File TOTAL
+		combineCorretionToOneFile();
+		
+		//Step 6: std File delta1 + delta2
+		StdFileGenerator std = new StdFileGenerator();
+		std.generateStd();
+		
+		//Step 7: Cleaner
+		Cleaner c = new Cleaner();
+		c.getCleanedTotalFile(projects);
+		
+		MeasuresCommitsGenerator mcg = new MeasuresCommitsGenerator(projects);
+		
 	}
 	
 	/*
 	 * It gets the gitHub URL reading it from the properties file.
 	 */
 	private static String getGitUrl(String projectName){
-		try {
-			List<String> list = Files.readAllLines(Paths.get(new URI("file://"+projectName+".properties")));
+			Path path = FileSystems.getDefault().getPath("./projects/"+projectName+"/"+projectName+".properties");
+			List<String> list = null;
+			try {
+				list = Files.readAllLines(path);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			for (String line : list)
 				if (line.startsWith("sonar.github.repository"))
 					return line.split("=")[1];
-		} catch (IOException | URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 		return "";
 	}
 	
@@ -108,7 +116,7 @@ public class ViolationFinder {
 			if (project.contains("TOTAL"))
 				continue;
 			String basePath = "./projects/";
-			List<String> lines = Files.readAllLines(Paths.get(new URI("file://"+basePath+"/"+project+"_correlation.csv")));
+			List<String> lines = Files.readAllLines((new File(basePath+"/"+project+"/"+project+"_correlation.csv").toPath()));
 			if (firstDone){
 				lines.remove(0);
 			}
@@ -123,7 +131,7 @@ public class ViolationFinder {
 			
 		}
 		pw.close();
-		} catch (IOException | URISyntaxException e) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -150,7 +158,7 @@ public class ViolationFinder {
 	 * @return
 	 */
 	private static boolean existBugFixingCommits(String projectName){
-		File f = new File("Project/"+projectName+"/"+projectName+"_BugFixingCommits");
+		File f = new File("projects/"+projectName+"/"+projectName+"_BugFixingCommits");
 		return f.exists();
 	}
 	

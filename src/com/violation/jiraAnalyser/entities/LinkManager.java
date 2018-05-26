@@ -24,7 +24,7 @@ public class LinkManager {
 		List<Link> links = new ArrayList<Link>(); // Arrays.asList(new Link[] { Link.EXAMPLE_LINK});
 		for(Transaction t : ts) {
 			if (counter%100==0)
-				logger.info("Missing "+counter +" commits");
+				System.out.println("Missing "+counter +" commits");
 			for (long bugId : t.getBugIds()){
 				Link l = new Link(t, bugId, projectName);
 				links.add(l);

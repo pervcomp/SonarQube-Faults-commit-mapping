@@ -36,7 +36,11 @@ public class CommitObject {
 				}
 			}
 			else{
+			    if (indexes.get(field) == 999)
+			    	System.out.println();
+				
 				String changedFiles = array[indexes.get(field)];
+
 				if (!changedFiles.isEmpty())
 					if (!changedFiles.contains(";"))
 						amountChangedFiles = 1;

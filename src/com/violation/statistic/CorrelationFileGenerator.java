@@ -236,7 +236,7 @@ public class CorrelationFileGenerator {
 	 */
 	private String getFaultKey(String fixingSha) {
 		String result = "";
-		String tempPath = basePath + "/" + projectName + "_BugFixingCommit.csv";
+		String tempPath = basePath + "/" + projectName + "_BugFixingCommits.csv";
 		BufferedReader br;
 		try {
 			br = new BufferedReader(new FileReader((tempPath)));
@@ -266,28 +266,9 @@ public class CorrelationFileGenerator {
 	 * @return
 	 */
 	private String getPriority(String fixingSha) {
-		String result = "";
-		String tempPath = basePath + "/" + projectName + "_BugFixingCommit.csv";
-		BufferedReader br;
-		try {
-			br = new BufferedReader(new FileReader((tempPath)));
-			String sCurrentLine;
-			while ((sCurrentLine = br.readLine()) != null) {
-				if (sCurrentLine.startsWith(fixingSha)) {
-					result = sCurrentLine.split(";")[7];
-					break;
-				}
-			}
-			br.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
-		return result;
+
+		return "";
 	}
 
 	/**

@@ -9,10 +9,8 @@ import java.util.List;
 
 public class HeadersFinder {
 
-	private  String[] metricsInt = {"classes","files","directories","functions","comment_lines","comment_lines_density","complexity","file_complexity","class_complexity","function_complexity","duplicated_lines",
-		"bugs","lines","ncloc","lines_to_cover","line_coverage","package","missing_package_info","statements","violations","sqale_rating","open_issues","reliability_remediation_effort","reliability_rating",
-		"security_remediation_effort","security_rating","development_cost","vulnerabilities"
-	};  
+	private  String[] metricsInt = {"classes","files","directories","functions","comment_lines"};
+
 	
 	private   String  path = "./projects/";
 
@@ -36,8 +34,10 @@ public class HeadersFinder {
 		listHeaders.add("cognitive_complexity");
 		listHeaders.add("git-changed-files");
 		for (String project : projects){
+			if (project.equals("TOTAL"))
+				continue;
 	        try {
-	        	String newPath = "./projects/"+project;
+	        	String newPath = "./projects/"+project+"/"+project+"_measures-and-issues.csv";
 	            BufferedReader br = new BufferedReader(new FileReader(newPath));
 	            String s = br.readLine();
 	            s = s.replaceAll("\"", "");

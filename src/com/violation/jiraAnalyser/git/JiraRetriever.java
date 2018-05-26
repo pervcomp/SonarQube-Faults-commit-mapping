@@ -117,7 +117,7 @@ public class JiraRetriever {
 			if (descNodes.getLength() == 0)
 				return;
 			 fileName = projectName + "_" + page + ".csv";
-			 file = new File(projectName + "/" + fileName);
+			 file = new File("projects/"+projectName + "/" + fileName);
 			if (file.exists() && !file.isDirectory()) {
 				return;
 			}

@@ -44,9 +44,9 @@ public class Application {
 	 * It downloads the logFile and import commits with fault keys
 	 */
 	public void mineData() {
-		logger.info("Downloading Git logs for project " + projectName);
+		System.out.println("Downloading Git logs for project " + projectName);
 		transactionsWithFault = transactionManager.getBugFixingCommits(sourceCodeRepository, projectName);
-		logger.info("Git logs downloaded for project " + projectName);
+		System.out.println("Git logs downloaded for project " + projectName);
 	}
 
 	/*
@@ -60,8 +60,8 @@ public class Application {
 		discartLinks(links);
 		saveBugFixingCommits(links);
 		linksBugFixing = links;
-		logger.info("Bug fixing commits for project " + projectName + "calculated");
-		logger.info(links.size() + " bug fixing commits for project " + projectName + "found");
+		System.out.println("Bug fixing commits for project " + projectName + "calculated");
+		System.out.println(links.size() + " bug fixing commits for project " + projectName + "found");
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class Application {
 		int count = linksBugFixing.size();
 		PrintWriter printWriter;
 		try {
-			printWriter = new PrintWriter(projectName + "/" + projectName + "_BugInducingCommits.csv");
+			printWriter = new PrintWriter("projects/"+projectName + "/" + projectName + "_BugInducingCommits.csv");
 			printWriter.println("bugFixingId;bugFixingTs;bugFixingfileChanged;bugInducingId;bugInducingTs;issueType");
 			for (Link l : linksBugFixing) {
 				if (count % 100 == 0)
@@ -104,7 +104,7 @@ public class Application {
 	public void downloadIssues(){
 		JiraRetriever jr = new JiraRetriever(DEFAULT_BUG_TRACKER,projectName,logger);
 		jr.printIssues();
-		logger.info("All Jira issues downloaded");
+		System.out.println("All Jira issues downloaded");
 	}
 	
 	/**
@@ -151,7 +151,7 @@ public class Application {
 		print += "\n";
 		print += String.format("%-16d%-16d%-16d%-16d%-16d%-16d%-16d", multi[3][0], multi[3][1], multi[3][2],
 				multi[3][3], multi[3][4], multi[3][5], multi[3][6]);
-		logger.info(print);
+		System.out.println(print);
 	}
 
 	/*
@@ -173,7 +173,7 @@ public class Application {
 		print += String.format("%s", "--------------------------------------------------------------------------------------------------------------");
 		print += "\n";
 		print+=("Links removed too low score (sem > 1 v (sem = 1 and syn > 0)): "+ linksToDelete.size() +" ("+ ((double)linksToDelete.size()/(double)links.size())*100 + "%)");
-		logger.info(print);
+		System.out.println(print);
 		links.removeAll(linksToDelete);
 	}
 	
@@ -184,7 +184,7 @@ public class Application {
 	 */
 	private void saveBugFixingCommits(List<Link> links){
 		try {
-			PrintWriter printWriter = new PrintWriter(new File(projectName + "/"+projectName+"_BugFixingCommits.csv"));
+			PrintWriter printWriter = new PrintWriter(new File("projects/"+projectName + "/"+projectName+"_BugFixingCommits.csv"));
 			printWriter.println("commitsSha;commitTs;commitComment;issueKey;issueOpen;issueClose;issueTitle");
 			String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 		    SimpleDateFormat format = new SimpleDateFormat(pattern);
@@ -207,11 +207,11 @@ public class Application {
 		}}
 		
 		public void calculateBugInducingCommits(List<Link> links){
-			logger.info("Calculating Bug Inducing Commits");
+			System.out.println("Calculating Bug Inducing Commits");
 			int count = links.size();
 			PrintWriter printWriter;
 			try {
-				printWriter = new PrintWriter(projectName+"/"+projectName+"_BugInducingCommits.csv");
+				printWriter = new PrintWriter("projects/"+projectName+"/"+projectName+"_BugInducingCommits.csv");
 				printWriter.println("bugFixingId;bugFixingTs;bugFixingfileChanged;bugInducingId;bugInducingTs;issueType");
 				for (Link l : links){
 					if (count % 100 == 0)

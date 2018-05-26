@@ -14,16 +14,11 @@ public class Storage {
 	
 	private Path FILE_STORAGE_PATH;
 	
-	{
-		// Create working directory if it does not exist.
-		FILE_STORAGE_PATH.toFile().mkdirs();
-	}
-	
 	private Git git = null;
 	private final Pattern pGit = Pattern.compile(".+\\.git$");
 	
 	public Storage(String projectName) {
-		FILE_STORAGE_PATH =  Paths.get("./projects/"+projectName+"/"+projectName);
+		FILE_STORAGE_PATH =  Paths.get("./projects/"+projectName);
 	}
 	
 	
@@ -42,7 +37,10 @@ public class Storage {
 			try {
 				this.git.cloneRepository();
 				this.git.pullUpdates();
+
+				
 				this.git.saveLog();
+				
 				list = git.getCommits();
 				for (Transaction t : list){
 					if (isBugPresumedFixing(t.getComment(),projectName))
@@ -51,6 +49,7 @@ public class Storage {
 				e.printStackTrace();
 			}
 		}
+		
 		return result;
 	}
 	

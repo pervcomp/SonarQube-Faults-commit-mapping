@@ -181,10 +181,10 @@ public class Link {
 	 */
 	private void setBug() {
 		int page = (int)Math.floor(number / 1000);
-		while(!new File(projectName+"/"+projectName+"_"+page+".csv").exists()){
+		while(!new File("projects/"+projectName+"/"+projectName+"_"+page+".csv").exists()){
 			page--;
 		}
-		try (BufferedReader br = new BufferedReader(new FileReader((projectName+"/"+projectName+"_"+page+".csv")))) {
+		try (BufferedReader br = new BufferedReader(new FileReader(("projects/"+projectName+"/"+projectName+"_"+page+".csv")))) {
 			String sCurrentLine;
 			while ((sCurrentLine = br.readLine()) != null) {
 				sCurrentLine = sCurrentLine.replaceAll("\"", "");

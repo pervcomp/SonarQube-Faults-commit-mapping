@@ -41,7 +41,7 @@ public class Git {
 	public final String cloneCommand;
 	public final File storagePath;
 	public final String pullCommand;
-	public final File workingDirectory;
+	public  File workingDirectory;
 	public final String logCommand;
 	public final File logFile;
 	public final File csvFile;
@@ -52,10 +52,10 @@ public class Git {
 	
 	public Git(Path storagePath, URL url, String projectName) {
 		this.projectName = projectName;
-		this.cloneCommand = "git clone " + url.toString();
+		this.cloneCommand = "git clone " + url.toString() + " " +projectName;
 		this.storagePath = storagePath.toFile();
 		this.pullCommand = "git pull";
-		this.workingDirectory = gitWorkingDirectory(storagePath, url);
+		this.workingDirectory = new File("projects/"+projectName+"/"+projectName+"/.git");
 		this.logCommand ="git log " +
 				"--pretty=format:\'" +
 				"%H" + DELIMITER +
@@ -63,7 +63,7 @@ public class Git {
 				"%aN" + DELIMITER +
 				"%s" +  DELIMITER +
 				"\' " +
-				"--name-status -M100% " + projectName ;
+				"--name-status -M100% " ;
 		this.logFile = this.gitLogFile(storagePath, url);
 		this.csvFile = this.csvFile(storagePath, url);
 		workingDirectory.delete();
@@ -93,7 +93,7 @@ public class Git {
 	}
 	
 	public void pullUpdates() throws Exception {
-		execute(this.pullCommand, this.workingDirectory);
+		execute(this.pullCommand, this.storagePath);
 	}
 	
 	public void saveLog() throws Exception {
@@ -117,7 +117,7 @@ public class Git {
 					throws Exception  {
 		System.out.println("$ " + command + " > " + destinationFile);
 		ProcessBuilder pb = new ProcessBuilder(command.split(" "));
-		pb.directory(workingDirectory);
+		pb.directory(this.workingDirectory);
 		pb.redirectOutput(destinationFile);
 		Process p = pb.start();
         p.waitFor();
