@@ -27,14 +27,15 @@ public class ViolationFinder {
 	public static void main(String[] args) {
 		//args = 0 => all projects otherwise just projects names inserted in the args
 		List<String> projects = getProjectsNames();
+
 		if (args.length > 0)
 			projects = Arrays.asList(args);
 		for (String project : projects){
 			System.out.println("Analysing project: " + project);
 			String sourceCodeRepository = getGitUrl(project);
+		
 			try {
 				Application a = new Application(project, sourceCodeRepository);
-				a.mineData();
 				//Step 1: downloads all jira issues. Step skipped 
 				if (existListIssues(project)){
 					System.out.println("List Issues found: step skipped. If you want to regenerate, please cancel them");
@@ -47,6 +48,7 @@ public class ViolationFinder {
 					System.out.println("List Bug Fixing found: step skipped. If you want to regenerate, please cancel them");
 				}
 				else{
+					a.mineData();
 					a.calculateBugFixingCommits();
 				}
 				//Step 3: creates BugInducingCommit File	
@@ -77,7 +79,11 @@ public class ViolationFinder {
 		Cleaner c = new Cleaner();
 		c.getCleanedTotalFile(projects);
 		
+		//Step 8: Generator commits with raw measures file 
 		MeasuresCommitsGenerator mcg = new MeasuresCommitsGenerator(projects);
+		
+		//Step 9: Generator commits with  delta measures file
+		MeasuresCommitsDeltaGenerator mcdf = new MeasuresCommitsDeltaGenerator();
 		
 	}
 	
@@ -158,7 +164,7 @@ public class ViolationFinder {
 	 * @return
 	 */
 	private static boolean existBugFixingCommits(String projectName){
-		File f = new File("projects/"+projectName+"/"+projectName+"_BugFixingCommits");
+		File f = new File("projects/"+projectName+"/"+projectName+"_BugFixingCommits.csv");
 		return f.exists();
 	}
 	
@@ -168,7 +174,7 @@ public class ViolationFinder {
 	 * @return
 	 */
 	private static boolean existBugInducingCommits(String projectName){
-		File f = new File("Project/"+projectName+"/"+projectName+"_BugInducingCommits");
+		File f = new File("projects/"+projectName+"/"+projectName+"_BugInducingCommits.csv");
 		return f.exists();
 	}
 	
