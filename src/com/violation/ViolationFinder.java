@@ -43,7 +43,7 @@ public class ViolationFinder {
 					System.out.println("List Issues found: step skipped. If you want to regenerate, please cancel them");
 				}
 				else{
-				//	a.downloadIssues();
+					a.downloadIssues();
 				}
 				//Step 2: creates BugFixingCommit File  
 				if (existBugFixingCommits(project)){

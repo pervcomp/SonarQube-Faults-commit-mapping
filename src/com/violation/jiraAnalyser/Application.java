@@ -84,8 +84,8 @@ public class Application {
 				SimpleDateFormat format1 = new SimpleDateFormat(pattern);
 				for (Suspect s : l.getSuspects()) {
 					printWriter.println();
-					printWriter.println(l.transaction.getId() + ";" + format1.format(l.transaction.getTimeStamp()) + ";"
-							+ s.getFileName() + ";" + s.getCommitId() + ";" + format1.format(s.getTs()) + ";"
+					printWriter.println(l.transaction.getId() + "," + format1.format(l.transaction.getTimeStamp()) + ","
+							+ s.getFileName() + "," + s.getCommitId() + "," + format1.format(s.getTs()) + ","
 							+ l.issue.getType());
 				}
 				count--;
@@ -186,16 +186,16 @@ public class Application {
 	private void saveBugFixingCommits(List<Link> links){
 		try {
 			PrintWriter printWriter = new PrintWriter(new File("projects/"+projectName + "/"+projectName+"_BugFixingCommits.csv"));
-			printWriter.println("commitsSha;commitTs;commitComment;issueKey;issueOpen;issueClose;issueTitle");
+			printWriter.println("commitsSha,commitTs,commitComment,issueKey,issueOpen,issueClose,issueTitle");
 			String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 		    SimpleDateFormat format = new SimpleDateFormat(pattern);
 			for (Link l : links){
-				String row = l.transaction.getId() + ";"
-						+    format.format(l.transaction.getTimeStamp()) + ";"
-						+    l.transaction.getComment() + ";"
-						+    projectName+"-"+l.issue.getId()	+";"
-						+    format.format(new Date(l.issue.getOpen())) + ";"
-					    +    format.format(new Date(l.issue.getClose())) + ";"
+				String row = l.transaction.getId() + ","
+						+    format.format(l.transaction.getTimeStamp()) + ","
+						+    l.transaction.getComment() + ","
+						+    projectName+"-"+l.issue.getId()	+","
+						+    format.format(new Date(l.issue.getOpen())) + ","
+					    +    format.format(new Date(l.issue.getClose())) + ","
 					    +    l.issue.getTitle()
 						;
 				printWriter.println(row);				
@@ -223,11 +223,11 @@ public class Application {
 			        for (Suspect s : l.getSuspects()){
 			        	printWriter.println();
 			        	printWriter.println(
-			        			l.transaction.getId() + ";" + 
-			        			format1.format(l.transaction.getTimeStamp()) +";" +
-			        			s.getFileName()		+ ";" +
-			        			s.getCommitId()     + ";" +
-			        			format1.format(s.getTs()) +";"+
+			        			l.transaction.getId() + "," + 
+			        			format1.format(l.transaction.getTimeStamp()) +"," +
+			        			s.getFileName()		+ "," +
+			        			s.getCommitId()     + "," +
+			        			format1.format(s.getTs()) +","+
 			        			l.issue.getType()
 			        			);
 			        }
