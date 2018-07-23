@@ -36,7 +36,7 @@ public class CorrelationFileGenerator {
 	 */
 	public CorrelationFileGenerator(String projectName) {
 		this.projectName = projectName;
-		basePath = "./projects/" + projectName;
+		basePath = "./extraction/" + projectName;
 		fillMapIndexes();
 	}
 
@@ -87,8 +87,8 @@ public class CorrelationFileGenerator {
 			List<String >lines = Files.readAllLines(new File(tempPath).toPath(),StandardCharsets.ISO_8859_1);
 			for (String sCurrentLine : lines) {
 				if (!sCurrentLine.startsWith("bug") && !sCurrentLine.isEmpty()) {
-					String shaInducing = sCurrentLine.split(";")[3];
-					String shaFixing = sCurrentLine.split(";")[0];
+					String shaInducing = sCurrentLine.split(",")[3];
+					String shaFixing = sCurrentLine.split(",")[0];
 					CommitObject inducingCommit = null;
 					CommitObject fixingCommit = null;
 					CommitObject indMinusOneCommit = null;
@@ -241,7 +241,7 @@ public class CorrelationFileGenerator {
 			String sCurrentLine;
 			while ((sCurrentLine = br.readLine()) != null) {
 				if (sCurrentLine.startsWith(fixingSha)) {
-					result = sCurrentLine.split(";")[3];
+					result = sCurrentLine.split(",")[3];
 					break;
 				}
 			}

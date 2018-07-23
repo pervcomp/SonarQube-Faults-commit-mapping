@@ -15,14 +15,14 @@ import java.util.List;
 public class HashAdder {
 
 	private static String projectName = "TOTAL";
-	private  static String basePath = "projects/"+projectName;
+	private  static String basePath = "extraction/"+projectName;
 	private static List<String> lines = null; 
 	private static List<String> commits = null; 
 	
 	public HashAdder(String project){
 		System.out.println(project);
 			projectName = project;
-			basePath = "projects/"+projectName;
+			basePath = "extraction/"+projectName;
 			 PrintWriter pw = null;
 			try {
 				pw = new PrintWriter(new File(basePath+"/"+projectName+"_measures-and-issues-cleaned.csv"));

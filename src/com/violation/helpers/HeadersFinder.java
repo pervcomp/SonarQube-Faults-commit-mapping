@@ -16,13 +16,13 @@ public class HeadersFinder {
 	private  String[] metricsInt = {"classes","files","directories","functions","comment_lines"};
 
 	
-	private   String  path = "./projects/";
+	private   String  path = "./extraction/";
 
 	public HeadersFinder(){}
 	
 	
 	public List<String> getHeaders(){
-		File file = new File("./projects");
+		File file = new File("./extraction");
 		String[] projects = file.list(new FilenameFilter() {
 			  @Override
 			  public boolean accept(File current, String name) {
@@ -40,7 +40,7 @@ public class HeadersFinder {
 			if (project.equals("TOTAL"))
 				continue;
 	        try {
-	        	String newPath = "./projects/"+project+"/"+project+"_measures-and-issues-cleaned.csv";
+	        	String newPath = "./extraction/"+project+"/"+project+"_measures-and-issues-cleaned.csv";
 	        	System.out.println(newPath);
 	            String s =  Files.readAllLines(new File(newPath).toPath(),StandardCharsets.ISO_8859_1).get(0);
 	            s = s.replaceAll("\"", "");

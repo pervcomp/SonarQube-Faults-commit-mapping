@@ -55,7 +55,7 @@ public class Git {
 		this.cloneCommand = "git clone " + url.toString() + " " +projectName;
 		this.storagePath = storagePath.toFile();
 		this.pullCommand = "git pull";
-		this.workingDirectory = new File("projects/"+projectName+"/"+projectName+"/.git");
+		this.workingDirectory = new File("extraction/"+projectName+"/"+projectName+"/.git");
 		this.logCommand ="git log " +
 				"--pretty=format:\'" +
 				"%H" + DELIMITER +
@@ -97,7 +97,7 @@ public class Git {
 	}
 	
 	public void saveLog() throws Exception {
-		File file = new File("./projects/" + projectName);
+		File file = new File("./extraction/" + projectName);
 		executeToFile(this.logCommand, file, this.logFile);
 	}
 	

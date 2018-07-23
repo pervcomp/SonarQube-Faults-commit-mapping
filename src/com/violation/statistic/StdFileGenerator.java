@@ -15,7 +15,7 @@ import java.util.List;
 public class StdFileGenerator {
 
 	private static String projectName = "TOTAL";
-	private  static String basePath = "projects/"+projectName;
+	private  static String basePath = "extraction/"+projectName;
 	private static List<String> lines = null; 
 	
 	public StdFileGenerator(){

@@ -74,7 +74,7 @@ public class Application {
 		int count = linksBugFixing.size();
 		PrintWriter printWriter;
 		try {
-			printWriter = new PrintWriter("projects/"+projectName + "/" + projectName + "_BugInducingCommits.csv");
+			printWriter = new PrintWriter("extraction/"+projectName + "/" + projectName + "_BugInducingCommits.csv");
 			printWriter.println("bugFixingId;bugFixingTs;bugFixingfileChanged;bugInducingId;bugInducingTs;issueType");
 			for (Link l : linksBugFixing) {
 				if (count % 100 == 0)
@@ -185,7 +185,7 @@ public class Application {
 	 */
 	private void saveBugFixingCommits(List<Link> links){
 		try {
-			PrintWriter printWriter = new PrintWriter(new File("projects/"+projectName + "/"+projectName+"_BugFixingCommits.csv"));
+			PrintWriter printWriter = new PrintWriter(new File("extraction/"+projectName + "/"+projectName+"_BugFixingCommits.csv"));
 			printWriter.println("commitsSha,commitTs,commitComment,issueKey,issueOpen,issueClose,issueTitle");
 			String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 		    SimpleDateFormat format = new SimpleDateFormat(pattern);
@@ -212,8 +212,8 @@ public class Application {
 			int count = links.size();
 			PrintWriter printWriter;
 			try {
-				printWriter = new PrintWriter("projects/"+projectName+"/"+projectName+"_BugInducingCommits.csv");
-				printWriter.println("bugFixingId;bugFixingTs;bugFixingfileChanged;bugInducingId;bugInducingTs;issueType");
+				printWriter = new PrintWriter("extraction/"+projectName+"/"+projectName+"_BugInducingCommits.csv");
+				printWriter.println("bugFixingId,bugFixingTs,bugFixingfileChanged,bugInducingId,bugInducingTs,issueType");
 				for (Link l : links){
 					if (count % 100 == 0)
 						logger.info(count + " Commits left");

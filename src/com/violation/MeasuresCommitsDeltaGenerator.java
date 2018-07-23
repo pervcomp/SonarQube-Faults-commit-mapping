@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class MeasuresCommitsDeltaGenerator {
-	private  static String basePath = "projects/TOTAL/";
+	private  static String basePath = "extraction/TOTAL/";
 	private static List<String> indList = new LinkedList<String>();
 	private static List<String> fixList = new LinkedList<String>();
 
@@ -26,11 +26,11 @@ public class MeasuresCommitsDeltaGenerator {
 		fillCommitsList();
 		PrintWriter pw = null;
 		List<String> list = null;
-		basePath = "projects/TOTAL/";
+		basePath = "extraction/TOTAL/";
 		basePath += "TOTAL_measures_with_commits_delta.csv";
 		try {
 			 pw = new PrintWriter(basePath);
-			 basePath = "projects/TOTAL/";
+			 basePath = "extraction/TOTAL/";
 			 basePath += "TOTAL_measures_with_commits.csv";
 			 list = Files.readAllLines((new File(basePath)).toPath(),StandardCharsets.ISO_8859_1);
 		} catch (FileNotFoundException e) {
@@ -63,7 +63,7 @@ public class MeasuresCommitsDeltaGenerator {
 	 * It fills the commits lists (fixing-inducing)
 	 */
 	private static void fillCommitsList() {
-		basePath = "projects/TOTAL/";
+		basePath = "extraction/TOTAL/";
 		basePath += "TOTAL_cleaned.csv";
 		try {
 			List<String> allCleaned = Files.readAllLines((new File((basePath)).toPath()),StandardCharsets.ISO_8859_1);

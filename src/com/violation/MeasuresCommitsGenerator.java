@@ -26,7 +26,7 @@ public class MeasuresCommitsGenerator {
 		PrintWriter pw  = null;
 
 		try {
-			pw = new PrintWriter("./projects/TOTAL/TOTAL_measures_with_commits.csv");
+			pw = new PrintWriter("./extraction/TOTAL/TOTAL_measures_with_commits.csv");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -34,7 +34,7 @@ public class MeasuresCommitsGenerator {
 		List<String> lines = null;
 		List<String> linesCommits = null;
 		try {
-			lines = Files.readAllLines((new File("projects/"+projects.get(0)+"/"+projects.get(0)+"_measures-and-issues-cleaned.csv").toPath()),StandardCharsets.ISO_8859_1);
+			lines = Files.readAllLines((new File("extraction/"+projects.get(0)+"/"+projects.get(0)+"_measures-and-issues-cleaned.csv").toPath()),StandardCharsets.ISO_8859_1);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -46,8 +46,8 @@ public class MeasuresCommitsGenerator {
 		for (String project : projects){
 			
 			try {
-				lines = Files.readAllLines((new File("projects/"+project+"/"+project+"_measures-and-issues-cleaned.csv").toPath()),StandardCharsets.ISO_8859_1);
-				linesCommits  = Files.readAllLines((new File("projects/"+project+"/"+project+"_git-commits.csv").toPath()),StandardCharsets.ISO_8859_1);
+				lines = Files.readAllLines((new File("extraction/"+project+"/"+project+"_measures-and-issues-cleaned.csv").toPath()),StandardCharsets.ISO_8859_1);
+				linesCommits  = Files.readAllLines((new File("extraction/"+project+"/"+project+"_git-commits.csv").toPath()),StandardCharsets.ISO_8859_1);
 				System.out.println(project);
 				System.out.println(lines.size());
 				fillMapIndexes( lines.get(0));
@@ -86,7 +86,7 @@ public class MeasuresCommitsGenerator {
 	private String getCommitType(List<String>lines, String sha){
 		for (String line : lines){
 			if (line.contains(sha)){
-				String[] array = line.split(";");
+				String[] array = line.split(",");
 				if (array[0].contains(sha))
 					return "-1";
 				else if (array[3].contains(sha))
@@ -99,7 +99,7 @@ public class MeasuresCommitsGenerator {
 	private void writeLine(String header, String project, String line, PrintWriter pw, List<String> commits){
 		List<String> linesInducing = null;
 		try {
-			linesInducing = Files.readAllLines((new File("./projects/"+project+"/"+project+"_BugInducingCommits.csv")).toPath());
+			linesInducing = Files.readAllLines((new File("./extraction/"+project+"/"+project+"_BugInducingCommits.csv")).toPath());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -115,7 +115,7 @@ public class MeasuresCommitsGenerator {
 				commit = commit.replace("\"\"", "");
 				String[] array = commit.split("\",");
 			    sha = array[2];
-			    lenght = array[2].split(";").length;
+			    lenght = array[2].split(",").length;
 				
 			}
 		}

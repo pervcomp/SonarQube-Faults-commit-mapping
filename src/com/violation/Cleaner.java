@@ -27,7 +27,7 @@ import com.violation.helpers.HashMapGenerator;
 
 public class Cleaner {
 	private static String projectName = "TOTAL";
-	private  static String basePath = "projects/"+projectName;
+	private  static String basePath = "extraction/"+projectName;
 	private static LinkedHashMap <String, Integer> indexes;
 	private static int indexSha = 0;
 	private static List<String> projects;
@@ -39,7 +39,7 @@ public class Cleaner {
 		this.projects = projects;
 		correlate();
 		projectName = "TOTAL";
-	    basePath = "projects/"+projectName;
+	    basePath = "extraction/"+projectName;
 		stripDuplicatesFromFile(basePath+ "/"+projectName+"_cleaned.csv");
 	}
 	
@@ -103,8 +103,8 @@ public class Cleaner {
 			br = new BufferedReader(new FileReader((tempPath)));
 			while ((sCurrentLine = br.readLine()) != null ) {
 				if (!sCurrentLine.startsWith("bug") && !sCurrentLine.isEmpty()){
-				String shaInducing = sCurrentLine.split(";")[3];
-				String shaFixing = sCurrentLine.split(";")[0];
+				String shaInducing = sCurrentLine.split(",")[3];
+				String shaFixing = sCurrentLine.split(",")[0];
 				CommitObject inducingCommit = null;
 				CommitObject fixingCommit = null;
 				CommitObject indMinusOneCommit = null;
@@ -264,7 +264,7 @@ public class Cleaner {
 			String sCurrentLine;
 			while ((sCurrentLine = br.readLine()) != null) {
 				if (sCurrentLine.startsWith(fixingSha)){
-					result= sCurrentLine.split(";")[3];
+					result= sCurrentLine.split(",")[3];
 					break;
 				}
 			}

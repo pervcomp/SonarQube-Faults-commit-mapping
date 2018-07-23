@@ -114,7 +114,7 @@ public class ViolationFinder {
 	 * It gets the gitHub URL reading it from the properties file.
 	 */
 	private static String getGitUrl(String projectName){
-			Path path = FileSystems.getDefault().getPath("./projects/projects.csv");
+			Path path = FileSystems.getDefault().getPath("projects.csv");
 			List<String> list = null;
 			try {
 				list = Files.readAllLines(path);
@@ -141,8 +141,8 @@ public class ViolationFinder {
 	private static void combineCorretionToOneFile(){
 		boolean firstDone = false;
 		try {
-		PrintWriter pw = new PrintWriter("./projects/"+"/TOTAL/TOTAL_correlation.csv");
-		File file = new File("./projects");
+		PrintWriter pw = new PrintWriter("./extraction/"+"/TOTAL/TOTAL_correlation.csv");
+		File file = new File("./extraction");
 		String[] projects = file.list(new FilenameFilter() {
 			  @Override
 			  public boolean accept(File current, String name) {
@@ -154,7 +154,7 @@ public class ViolationFinder {
 			System.out.println(project);
 			if (project.contains("TOTAL"))
 				continue;
-			String basePath = "./projects/";
+			String basePath = "./extraction/";
 			List<String> lines = Files.readAllLines((new File(basePath+"/"+project+"/"+project+"_correlation.csv").toPath()),StandardCharsets.ISO_8859_1);
 			if (firstDone){
 				lines.remove(0);
@@ -183,7 +183,7 @@ public class ViolationFinder {
 	 */
 	private static List<String> getProjectsNames(){
 		List<String> projectsList = new LinkedList<String>();
-		File[] directories = new File("projects").listFiles(File::isDirectory);
+		File[] directories = new File("extraction").listFiles(File::isDirectory);
 		for (File d : directories)
 				if (!d.getName().equals("TOTAL")){
 					projectsList.add(d.getName());
@@ -197,7 +197,7 @@ public class ViolationFinder {
 	 * @return
 	 */
 	private static boolean existBugFixingCommits(String projectName){
-		File f = new File("projects/"+projectName+"/"+projectName+"_BugFixingCommits.csv");
+		File f = new File("extraction/"+projectName+"/"+projectName+"_BugFixingCommits.csv");
 		return f.exists();
 	}
 	
@@ -207,7 +207,7 @@ public class ViolationFinder {
 	 * @return
 	 */
 	private static boolean existBugInducingCommits(String projectName){
-		File f = new File("projects/"+projectName+"/"+projectName+"_BugInducingCommits.csv");
+		File f = new File("extraction/"+projectName+"/"+projectName+"_BugInducingCommits.csv");
 		return f.exists();
 	}
 	
@@ -217,7 +217,7 @@ public class ViolationFinder {
 	 * @return
 	 */
 	private static boolean existListIssues(String projectName){
-		File f = new File("projects/"+projectName+"/"+projectName+"_0");
+		File f = new File("extraction/"+projectName+"/"+projectName+"_0");
 		return f.exists();
 	}
 	

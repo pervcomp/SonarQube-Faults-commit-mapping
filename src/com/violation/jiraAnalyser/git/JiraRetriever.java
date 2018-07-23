@@ -156,7 +156,7 @@ public class JiraRetriever {
 	}
 	
 	private void printHeader(PrintWriter pw){
-		String header = "issueKey;title;resolution;status;assignee;createdDateEpoch;resolvedDateEpoch;type;attachments;priority;comments;";
+		String header = "issueKey,title,resolution,status,assignee,createdDateEpoch,resolvedDateEpoch,type,attachments,priority,comments";
 		pw.println(header);
 	}
 	
@@ -246,16 +246,16 @@ public class JiraRetriever {
 					break;
 				}
 			}
-			String toPrint = issueKey + ";"+
-							 title    + ";"+
-							 resolution+";" + 
-							 status   + ";"+
-							 assignee + ";"+
-							 createdDateEpoch + ";"+
-							 resolvedDateEpoch + ";"+
-							 type + ";"+
-							 attachmentsList.toString() + ";" +
-							 priority +";";
+			String toPrint = issueKey + ","+
+							 title    + ","+
+							 resolution+"," + 
+							 status   + ","+
+							 assignee + ","+
+							 createdDateEpoch + ","+
+							 resolvedDateEpoch + ","+
+							 type + ","+
+							 attachmentsList.toString() + "," +
+							 priority +",";
 			for (String comment : commentsList){
 				toPrint+=comment.replace(";", "").replace(":", "").replace(".", "").replace(",", "").replace("\n", "").replace("\r", "").replace("\t", "")+";";}
 			pw.println(toPrint);
