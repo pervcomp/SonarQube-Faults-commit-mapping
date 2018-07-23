@@ -66,6 +66,9 @@ public class JiraRetriever {
 	private int getTotalNumberIssues(){
 		String tempQuery = "?jqlQuery=project+%3D+{0}+ORDER+BY+key+DESC&tempMax=1";
 		tempQuery = tempQuery.replace("{0}", projectName);
+		if (projectName.equals("EXEC")){
+			tempQuery = tempQuery.replace("EXEC", "'EXEC'");
+		}
 		try {
 			url = new URL(jiraURL + tempQuery);
 			connection = url.openConnection();
@@ -79,7 +82,7 @@ public class JiraRetriever {
 				return Integer.parseInt(key);
 			}}
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			System.out.println(e.getMessage());
 		} 
 		return 0;
 		}
@@ -90,7 +93,7 @@ public class JiraRetriever {
 		int totalePages = (int) Math.ceil(((double) getTotalNumberIssues() / 1000));
 		String fileName = projectName + "_" + page + ".csv";
 		File file = new File(projectName + "/" + fileName);
-		while (file.exists() ) {
+		/*while (file.exists() ) {
 			page++;
 			fileName = projectName + "_" + page + ".csv";
 			file = new File(projectName + "/" + fileName);
@@ -100,14 +103,21 @@ public class JiraRetriever {
 			fileName = projectName + "_" + page + ".csv";
 			file = new File(projectName + "/" + fileName);
 			file.delete();
-		}
+		}*/
 		
 		while (true) {
 			String tempQuery = "?jqlQuery=project+%3D+{0}+ORDER+BY+key+ASC&tempMax=1000&pager/start={1}";
 			tempQuery = tempQuery.replace("{0}", projectName);
+			if (projectName.equals("EXEC")){
+				tempQuery = tempQuery.replace("EXEC", "'EXEC'");
+			}
+			
+			
+			
+			
 			tempQuery = tempQuery.replace("{1}", ((page) * 1000) + "");
 			if (totalePages >= (page + 1))
-				logger.warn("Download Jira issues. Page: " + (page + 1) + "/" + totalePages);
+				System.out.println("Download Jira issues. Page: " + (page + 1) + "/" + totalePages);
 			try {
 				url = new URL(jiraURL + tempQuery);
 				connection = url.openConnection();
@@ -133,8 +143,8 @@ public class JiraRetriever {
 			pw.close();
 			page++;
 		} catch (Exception e) {
-				logger.error(e.getMessage());
-				logger.info("Retrying in 1 minute");
+			System.out.println(e.getMessage());
+			System.out.println("Retrying in 1 minute");
 				try {
 					Thread.sleep(60000);
 				} catch (InterruptedException e1) {

@@ -191,7 +191,13 @@ public class Link {
 				if (sCurrentLine.startsWith(projectName + "-" + number)) {
 					String[] s = sCurrentLine.split(";");
 					List<String> comments = new LinkedList<String>();
-					List<String> attachments = Arrays.asList(s[7].replace("[", "").replace("]", ""));
+					List<String> attachments = null;
+					try{
+						attachments = 		Arrays.asList(s[7].replace("[", "").replace("]", ""));
+					}
+					catch(Exception e){
+						e.printStackTrace();
+					}
 					int i = 8;
 					while (i < s.length) {
 						comments.add(s[i]);
@@ -214,8 +220,11 @@ public class Link {
 						 resolution = Resolution.NONE;
 					}
 					
+					if  (s.length>4){
 					issue = new Issue(number, s[1], status,resolution, s[4],
 							Long.parseLong(s[5]), Long.parseLong(s[6]),attachments, comments,s[7]);
+					}
+					
 					break;
 				}
 			}

@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,6 +19,7 @@ import java.util.List;
 
 import javax.swing.event.ListSelectionEvent;
 
+import com.violation.helpers.HashAdder;
 import com.violation.jiraAnalyser.Application;
 import com.violation.statistic.CorrelationFileGenerator;
 import com.violation.statistic.StdFileGenerator;
@@ -28,8 +30,8 @@ public class ViolationFinder {
 		//args = 0 => all projects otherwise just projects names inserted in the args
 		List<String> projects = getProjectsNames();
 
-		if (args.length > 0)
-			projects = Arrays.asList(args);
+		
+		
 		for (String project : projects){
 			System.out.println("Analysing project: " + project);
 			String sourceCodeRepository = getGitUrl(project);
@@ -41,7 +43,7 @@ public class ViolationFinder {
 					System.out.println("List Issues found: step skipped. If you want to regenerate, please cancel them");
 				}
 				else{
-					a.downloadIssues();
+				//	a.downloadIssues();
 				}
 				//Step 2: creates BugFixingCommit File  
 				if (existBugFixingCommits(project)){
@@ -58,30 +60,51 @@ public class ViolationFinder {
 				else{
 					a.calculateBugInducingCommits();
 				}
+				
+				HashAdder ha = new HashAdder( project);
+		
+				System.out.print("HashAdder");
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}}
+			
+			for (String project : projects){
+				
 				//Step 4: creates Correlation File per project
 				CorrelationFileGenerator cfg = new CorrelationFileGenerator(project);
-				cfg.createCorrelationFile();
+				cfg.createCorrelationFile();}
+				
 			
 			
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+	
+		
+		
+		//System.exit(1);
+		System.out.println("Combining to one file");
 		//Step 5: combinates to One-File TOTAL
 		combineCorretionToOneFile();
 		
+
+		
+		
+		
+		System.out.println("STD");
 		//Step 6: std File delta1 + delta2
 		StdFileGenerator std = new StdFileGenerator();
 		std.generateStd();
 		
+		
+		System.out.println("Cleaner");
 		//Step 7: Cleaner
 		Cleaner c = new Cleaner();
 		c.getCleanedTotalFile(projects);
 		
+		System.out.println("MeasuresCommitsGenerator");
 		//Step 8: Generator commits with raw measures file 
 		MeasuresCommitsGenerator mcg = new MeasuresCommitsGenerator(projects);
 		
+		System.out.println("MeasuresCommitsDeltaGenerator");
 		//Step 9: Generator commits with  delta measures file
 		MeasuresCommitsDeltaGenerator mcdf = new MeasuresCommitsDeltaGenerator();
 		
@@ -91,7 +114,7 @@ public class ViolationFinder {
 	 * It gets the gitHub URL reading it from the properties file.
 	 */
 	private static String getGitUrl(String projectName){
-			Path path = FileSystems.getDefault().getPath("./projects/"+projectName+"/"+projectName+".properties");
+			Path path = FileSystems.getDefault().getPath("./projects/projects.csv");
 			List<String> list = null;
 			try {
 				list = Files.readAllLines(path);
@@ -100,8 +123,17 @@ public class ViolationFinder {
 				e.printStackTrace();
 			}
 			for (String line : list)
-				if (line.startsWith("sonar.github.repository"))
-					return line.split("=")[1];
+				if (line.contains("org.apache:"+projectName.toLowerCase()) ||  
+					line.contains("org.apache:commons-"+projectName.toLowerCase())){
+					System.out.println(line.split(",")[0].replace("\"", "") + ".git");
+					return line.split(",")[0].replace("\"", "") + ".git";
+			}
+			
+			for (String line : list){
+				if (line.contains(projectName))
+					return line.split(",")[0].replace("\"", "") + ".git";
+			}
+
 
 		return "";
 	}
@@ -119,10 +151,11 @@ public class ViolationFinder {
 			});
 		
 		for (String project : projects){
+			System.out.println(project);
 			if (project.contains("TOTAL"))
 				continue;
 			String basePath = "./projects/";
-			List<String> lines = Files.readAllLines((new File(basePath+"/"+project+"/"+project+"_correlation.csv").toPath()));
+			List<String> lines = Files.readAllLines((new File(basePath+"/"+project+"/"+project+"_correlation.csv").toPath()),StandardCharsets.ISO_8859_1);
 			if (firstDone){
 				lines.remove(0);
 			}
@@ -150,7 +183,7 @@ public class ViolationFinder {
 	 */
 	private static List<String> getProjectsNames(){
 		List<String> projectsList = new LinkedList<String>();
-		File[] directories = new File("./projects").listFiles(File::isDirectory);
+		File[] directories = new File("projects").listFiles(File::isDirectory);
 		for (File d : directories)
 				if (!d.getName().equals("TOTAL")){
 					projectsList.add(d.getName());
@@ -184,7 +217,7 @@ public class ViolationFinder {
 	 * @return
 	 */
 	private static boolean existListIssues(String projectName){
-		File f = new File("Project/"+projectName+"/"+projectName+"_0");
+		File f = new File("projects/"+projectName+"/"+projectName+"_0");
 		return f.exists();
 	}
 	

@@ -19,6 +19,7 @@ public class HashMapGenerator {
 			indexes.put(field, 999);
 		}
 		fillHashMap();
+
 	}
 	
 	private void fillHashMap(){

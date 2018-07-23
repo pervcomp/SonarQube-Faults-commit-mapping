@@ -2,17 +2,21 @@ package com.violation.statistic;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Set;
 
 import com.violation.helpers.CommitObject;
@@ -40,21 +44,18 @@ public class CorrelationFileGenerator {
 	 * It fills map with indexes / fields
 	 */
 	private void fillMapIndexes() {
-		String tempPath = basePath + "/" + projectName + "_measures-and-issues.csv";
-		BufferedReader br;
+		String tempPath = basePath + "/" + projectName + "_measures-and-issues-cleaned.csv";
 		try {
-			br = new BufferedReader(new FileReader((tempPath)));
-			String sCurrentLine = br.readLine();
+			String sCurrentLine =  Files.readAllLines(new File(tempPath).toPath(),StandardCharsets.ISO_8859_1).get(0);
 			String[] array = sCurrentLine.split(",");
 			for (int i = 0; i < array.length; i++) {
-				if (array[i].equals("git-hash")) {
+				if (array[i].contains("git-hash")) {
 					indexSha = i;
 					break;
 				}
 			}
 			HashMapGenerator hmg = new HashMapGenerator(sCurrentLine);
 			indexes = hmg.getHashMapFields();
-			br.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -80,12 +81,11 @@ public class CorrelationFileGenerator {
 		pw.println();
 		String tempPath = basePath + "/" + projectName + "_BugInducingCommits.csv";
 		BufferedReader br;
-		String sCurrentLine = "";
 		int fail = 0;
 		int count = 1;
 		try {
-			br = new BufferedReader(new FileReader((tempPath)));
-			while ((sCurrentLine = br.readLine()) != null) {
+			List<String >lines = Files.readAllLines(new File(tempPath).toPath(),StandardCharsets.ISO_8859_1);
+			for (String sCurrentLine : lines) {
 				if (!sCurrentLine.startsWith("bug") && !sCurrentLine.isEmpty()) {
 					String shaInducing = sCurrentLine.split(";")[3];
 					String shaFixing = sCurrentLine.split(";")[0];
@@ -115,21 +115,21 @@ public class CorrelationFileGenerator {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println(sCurrentLine);
+
 		}
 		pw.close();
 		stripDuplicatesFromFile(basePath + "/" + projectName + "_correlation.csv");
 
 	}
 
-	private String getCommiString(String sha) {
-		String tempPath = basePath + "/" + projectName + "_measures-and-issues.csv";
+	private String getCommiString(String shaTs) {
+		String tempPath = basePath + "/" + projectName + "_measures-and-issues-cleaned.csv";
 		BufferedReader br;
 		try {
 			br = new BufferedReader(new FileReader((tempPath)));
 			String sCurrentLine;
 			while ((sCurrentLine = br.readLine()) != null) {
-				if (sCurrentLine.contains(sha)) {
+				if (sCurrentLine.contains(shaTs)) {
 					br.close();
 					return sCurrentLine;
 				}
@@ -142,18 +142,20 @@ public class CorrelationFileGenerator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+
 		return "";
 	}
 
-	private String getCommitPredString(String sha) {
-		String tempPath = basePath + "/" + projectName + "_measures-and-issues.csv";
+	private String getCommitPredString(String shaTs) {
+		String tempPath = basePath + "/" + projectName + "_measures-and-issues-cleaned.csv";
 		BufferedReader br;
 		try {
 			br = new BufferedReader(new FileReader((tempPath)));
 			String sCurrentLine;
 			String sCurrentLineTemp = "";
 			while ((sCurrentLine = br.readLine()) != null) {
-				if (sCurrentLine.contains(sha)) {
+				if (sCurrentLine.contains(shaTs)) {
 					br.close();
 					return sCurrentLineTemp;
 				}
@@ -171,8 +173,9 @@ public class CorrelationFileGenerator {
 	}
 
 	private static String getSha(String row) {
-		String[] array = row.split(",");
-		return array[indexSha];
+		row = row.replace("\"\"", "");
+		String[] array = row.split("\",");
+		return array[indexSha].replaceAll("\"", "");
 
 	}
 
@@ -215,17 +218,12 @@ public class CorrelationFileGenerator {
 			if (!key.contains("git-changed-files")) {
 				finalRow += numberFormatter.format(indMap.get(key) - indMinusOneMap.get(key)) + ",";
 				finalRow += numberFormatter.format(fixMap.get(key) - indMap.get(key)) + ",";
-				finalRow += numberFormatter.format(
-						(fixMap.get(key) - indMap.get(key)) + (indMap.get(key) - indMinusOneMap.get(key))) + ",";
-			} else {
-				finalRow += ind.getAmountChangedFiles() - indMinusOne.getAmountChangedFiles() + ",";
-				finalRow += fixing.getAmountChangedFiles() - ind.getAmountChangedFiles() + ",";
-				finalRow += (ind.getAmountChangedFiles() - indMinusOne.getAmountChangedFiles())
-						+ (fixing.getAmountChangedFiles() - ind.getAmountChangedFiles()) + ",";
+				finalRow += numberFormatter.format((fixMap.get(key) - indMap.get(key)) + (indMap.get(key) - indMinusOneMap.get(key))) + ",";
 			}
-
-		}
-		pw.println(finalRow);
+		
+	}
+		pw.println(finalRow);	
+	
 	}
 
 	/**

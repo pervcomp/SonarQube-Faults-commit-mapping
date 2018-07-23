@@ -34,6 +34,7 @@ public class Application {
 
 	public Application(String projectName, String sourceCodeRepository) throws MalformedURLException {
 		this.projectName = projectName;
+		System.out.println(sourceCodeRepository);
 		this.sourceCodeRepository = new URL(sourceCodeRepository);
 		this.bugTracker = new URL(DEFAULT_BUG_TRACKER);
 		System.setProperty("logfile.name", (projectName + "/" + projectName + "_JiraAnalyserLogger.log"));

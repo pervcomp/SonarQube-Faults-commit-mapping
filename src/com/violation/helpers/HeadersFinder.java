@@ -1,8 +1,12 @@
 package com.violation.helpers;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,14 +36,13 @@ public class HeadersFinder {
 		listHeaders.add("minor_violations");
 		listHeaders.add("info_violations");
 		listHeaders.add("cognitive_complexity");
-		listHeaders.add("git-changed-files");
 		for (String project : projects){
 			if (project.equals("TOTAL"))
 				continue;
 	        try {
-	        	String newPath = "./projects/"+project+"/"+project+"_measures-and-issues.csv";
-	            BufferedReader br = new BufferedReader(new FileReader(newPath));
-	            String s = br.readLine();
+	        	String newPath = "./projects/"+project+"/"+project+"_measures-and-issues-cleaned.csv";
+	        	System.out.println(newPath);
+	            String s =  Files.readAllLines(new File(newPath).toPath(),StandardCharsets.ISO_8859_1).get(0);
 	            s = s.replaceAll("\"", "");
 	            String[] array = s.split(",");
 	            for (String st : array){
@@ -48,7 +51,6 @@ public class HeadersFinder {
 	            			listHeaders.add(st);
 	            		}	
 	            }
-	            br.close();
 	        } catch (Exception ex) {
 	            ex.printStackTrace();
 	        }

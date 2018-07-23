@@ -11,7 +11,6 @@ public class CommitObject {
 	private long timeEpoch;
 	private LinkedHashMap <String,Integer> indexes;
 	private LinkedHashMap <String,Double> fieldsValues =  new LinkedHashMap<>();
-	private int amountChangedFiles = 0;
 
 	public CommitObject(String inducingRow, LinkedHashMap <String,Integer> indexes, String sha){
 		this.sha = sha;
@@ -38,23 +37,14 @@ public class CommitObject {
 			else{
 			    if (indexes.get(field) == 999)
 			    	System.out.println();
-				
-				String changedFiles = array[indexes.get(field)];
-
-				if (!changedFiles.isEmpty())
-					if (!changedFiles.contains(";"))
-						amountChangedFiles = 1;
-					else
-						amountChangedFiles = changedFiles.split(";").length;
+			
 					
 			}
 		}
 		
 	}
 
-	public int getAmountChangedFiles(){
-		return amountChangedFiles;
-	}
+
 	
 	public LinkedHashMap <String,Double> getFieldsValues(){
 		return fieldsValues;
