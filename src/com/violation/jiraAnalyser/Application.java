@@ -75,7 +75,7 @@ public class Application {
 		PrintWriter printWriter;
 		try {
 			printWriter = new PrintWriter("extraction/"+projectName + "/" + projectName + "_BugInducingCommits.csv");
-			printWriter.println("bugFixingId;bugFixingTs;bugFixingfileChanged;bugInducingId;bugInducingTs;issueType");
+			printWriter.println("bugFixingId;bugFixingTs;bugFixingfileChanged;bugInducingId;bugInducingTs;issueType;issueKeys");
 			for (Link l : linksBugFixing) {
 				if (count % 100 == 0)
 					logger.info(count + " Commits left");
@@ -86,7 +86,7 @@ public class Application {
 					printWriter.println();
 					printWriter.println(l.transaction.getId() + "," + format1.format(l.transaction.getTimeStamp()) + ","
 							+ s.getFileName() + "," + s.getCommitId() + "," + format1.format(s.getTs()) + ","
-							+ l.issue.getType());
+							+ l.issue.getType() + "," + projectName.toUpperCase() + "-"+l.issue.getId());
 				}
 				count--;
 			}
