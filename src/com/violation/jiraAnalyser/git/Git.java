@@ -54,8 +54,9 @@ public class Git {
 		this.projectName = projectName;
 		this.cloneCommand = "git clone " + url.toString() + " " +projectName;
 		this.storagePath = storagePath.toFile();
+		System.out.println(storagePath.toString());
 		this.pullCommand = "git pull";
-		this.workingDirectory = new File("extraction/"+projectName+"/"+projectName+"/.git");
+		this.workingDirectory = new File("./extraction/"+projectName+"/"+projectName+"/.git");
 		this.logCommand ="git log " +
 				"--pretty=format:\'" +
 				"%H" + DELIMITER +
@@ -141,7 +142,10 @@ public class Git {
 		       List<FileInfo> filesAffected = new ArrayList<FileInfo>();
 		       line1 = br.readLine();
 		       if (line1 != null){
+		    	 
+	
 		       while (!(line1).equals("")){
+		    	  
 		    	   int BUFFER_SIZE = 100000;
 		    	   br.mark(BUFFER_SIZE);
 		    	   if (!line1.startsWith("\'")){

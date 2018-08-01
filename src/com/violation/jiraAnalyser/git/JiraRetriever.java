@@ -127,7 +127,7 @@ public class JiraRetriever {
 			if (descNodes.getLength() == 0)
 				return;
 			 fileName = projectName + "_" + page + ".csv";
-			 file = new File("projects/"+projectName + "/" + fileName);
+			 file = new File("extraction/"+projectName + "/" + fileName);
 			if (file.exists() && !file.isDirectory()) {
 				return;
 			}
@@ -188,7 +188,7 @@ public class JiraRetriever {
 			for (int p = 0; p < children.getLength(); p++) {
 				switch (children.item(p).getNodeName()) {
 				case "title":
-					title = children.item(p).getTextContent().replace(";", "");
+					title = children.item(p).getTextContent().replace(",", "");
 					break;
 				case "resolution":
 					resolution = children.item(p).getTextContent();
@@ -247,15 +247,15 @@ public class JiraRetriever {
 				}
 			}
 			String toPrint = issueKey + ","+
-							 title    + ","+
+							 title.replace(",", "")    + ","+
 							 resolution+"," + 
-							 status   + ","+
-							 assignee + ","+
+							 status.replace(",", "")   + ","+
+							 assignee.replace(",", "") + ","+
 							 createdDateEpoch + ","+
 							 resolvedDateEpoch + ","+
 							 type + ","+
-							 attachmentsList.toString() + "," +
-							 priority +",";
+							 attachmentsList.toString().replace(",", "") + "," +
+							 priority.replace(",", "") +",";
 			for (String comment : commentsList){
 				toPrint+=comment.replace(";", "").replace(":", "").replace(".", "").replace(",", "").replace("\n", "").replace("\r", "").replace("\t", "")+";";}
 			pw.println(toPrint);

@@ -20,7 +20,6 @@ public class LinkManager {
 	 */
 	public List<Link> getLinks(List<Transaction> ts, String projectName, Logger logger) {
 		int counter=ts.size();
-		logger.info("Missing "+counter +" commits");
 		List<Link> links = new ArrayList<Link>(); // Arrays.asList(new Link[] { Link.EXAMPLE_LINK});
 		for(Transaction t : ts) {
 			if (counter%100==0)

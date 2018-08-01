@@ -55,7 +55,7 @@ public class Application {
 	 * Commits accepted are saved on the projectName_BugFixingCommits.csv file.
 	 */
 	public void calculateBugFixingCommits() {
-		logger.info("Calculating bug fixing commits for project " + projectName);
+		System.out.println("Calculating bug fixing commits for project " + projectName);
 		List<Link> links = linkManager.getLinks(transactionsWithFault, projectName, logger);
 		printData(links);
 		discartLinks(links);
@@ -70,15 +70,15 @@ public class Application {
 	 * the results on the file projectName+"_BugInducingCommits.csv
 	 */
 	public void calculateBugInducingCommits() {
-		logger.info("Calculating Bug Inducing Commits");
+		System.out.println("Calculating Bug Inducing Commits");
 		int count = linksBugFixing.size();
 		PrintWriter printWriter;
 		try {
 			printWriter = new PrintWriter("extraction/"+projectName + "/" + projectName + "_BugInducingCommits.csv");
-			printWriter.println("bugFixingId;bugFixingTs;bugFixingfileChanged;bugInducingId;bugInducingTs;issueType;issueKeys");
+			printWriter.println("bugFixingId,bugFixingTs,bugFixingfileChanged,bugInducingId,bugInducingTs,issueType,issueKeys");
 			for (Link l : linksBugFixing) {
 				if (count % 100 == 0)
-					logger.info(count + " Commits left");
+					System.out.println(count + " Commits left");
 				l.calculateSuspects(transactionManager.getGit(), logger);
 				String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 				SimpleDateFormat format1 = new SimpleDateFormat(pattern);

@@ -18,7 +18,7 @@ public class Storage {
 	private final Pattern pGit = Pattern.compile(".+\\.git$");
 	
 	public Storage(String projectName) {
-		FILE_STORAGE_PATH =  Paths.get("./projects/"+projectName);
+		FILE_STORAGE_PATH =  Paths.get("./extraction/"+projectName);
 	}
 	
 	

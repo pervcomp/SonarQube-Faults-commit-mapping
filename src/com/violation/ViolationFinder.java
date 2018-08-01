@@ -46,20 +46,20 @@ public class ViolationFinder {
 					a.downloadIssues();
 				}
 				//Step 2: creates BugFixingCommit File  
-				if (existBugFixingCommits(project)){
+				/*if (existBugFixingCommits(project)){
 					System.out.println("List Bug Fixing found: step skipped. If you want to regenerate, please cancel them");
 				}
-				else{
+				else{*/
 					a.mineData();
 					a.calculateBugFixingCommits();
-				}
+				//}
 				//Step 3: creates BugInducingCommit File	
-				if (existBugInducingCommits(project)){
+				/*if (existBugInducingCommits(project)){
 					System.out.println("List Bug Inducing found: step skipped. If you want to regenerate, please cancel them");
 				}
-				else{
+				else{*/
 					a.calculateBugInducingCommits();
-				}
+				//}
 				
 				HashAdder ha = new HashAdder( project);
 		

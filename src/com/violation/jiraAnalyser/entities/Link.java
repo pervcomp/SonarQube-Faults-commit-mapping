@@ -181,15 +181,15 @@ public class Link {
 	 */
 	private void setBug() {
 		int page = (int)Math.floor(number / 1000);
-		while(!new File("projects/"+projectName+"/"+projectName+"_"+page+".csv").exists()){
+		while(!new File("extraction/"+projectName+"/"+projectName+"_"+page+".csv").exists()){
 			page--;
 		}
-		try (BufferedReader br = new BufferedReader(new FileReader(("projects/"+projectName+"/"+projectName+"_"+page+".csv")))) {
+		try (BufferedReader br = new BufferedReader(new FileReader(("extraction/"+projectName+"/"+projectName+"_"+page+".csv")))) {
 			String sCurrentLine;
 			while ((sCurrentLine = br.readLine()) != null) {
 				sCurrentLine = sCurrentLine.replaceAll("\"", "");
 				if (sCurrentLine.startsWith(projectName + "-" + number)) {
-					String[] s = sCurrentLine.split(";");
+					String[] s = sCurrentLine.split(",");
 					List<String> comments = new LinkedList<String>();
 					List<String> attachments = null;
 					try{
