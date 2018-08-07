@@ -10,26 +10,31 @@ import java.sql.SQLException;
 */
 public class SQLiteJDBCDriverConnection {
 	
-	Connection conn = null;
+	private Connection conn = null;
 	
 	public SQLiteJDBCDriverConnection(){}
 
     /**
     * Create connection to sonar database
     */
-   public Connection openConnection() {
+   public boolean openConnection() {
        try {
            // db parameters
            String url = "jdbc:sqlite:./SonarQube.db";
            // create a connection to the database
            conn = DriverManager.getConnection(url);
            System.out.println("Connection to SQLite has been established.");
-           return conn;
+           return true;
            
        } catch (SQLException e) {
            System.out.println(e.getMessage());
-           return null;
+           return false;
        } 
+   }
+   
+   
+   public Connection getConnection(){
+	   return conn;
    }
 
    /**
