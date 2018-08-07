@@ -1,9 +1,11 @@
 package com.violation;
 
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -21,6 +23,7 @@ import javax.swing.event.ListSelectionEvent;
 
 import com.violation.helpers.HashAdder;
 import com.violation.jiraAnalyser.Application;
+import com.violation.logUtils.ParsingLog;
 import com.violation.statistic.CorrelationFileGenerator;
 import com.violation.statistic.StdFileGenerator;
 
@@ -30,11 +33,10 @@ public class ViolationFinder {
 		//args = 0 => all projects otherwise just projects names inserted in the args
 		List<String> projects = getProjectsNames();
 
-		
-		
 		for (String project : projects){
 			System.out.println("Analysing project: " + project);
 			String sourceCodeRepository = getGitUrl(project);
+			getGitChanges(project);
 		
 			try {
 				Application a = new Application(project, sourceCodeRepository);
@@ -221,7 +223,60 @@ public class ViolationFinder {
 		return f.exists();
 	}
 	
+	private static String executeCommand(String command) {
+		System.out.println(command);
+		StringBuffer output = new StringBuffer();
+
+		Process p;
+		try {
+			 String[] cmds = {"/bin/sh", command}; 
+			p = Runtime.getRuntime().exec(cmds);
+			p.waitFor();
+			BufferedReader reader = 
+                            new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+                        String line = "";			
+			while ((line = reader.readLine())!= null) {
+				output.append(line + "\n");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return output.toString();
+
+	}
 	
+	private static void getGitChanges(String project) {
+		String path_git_system=null;  
+	    path_git_system="estraction/"+project+"/"+project;
+		String path_bin =path_git_system+ "/bin";
+		String system=project;
+		System.out.println("CREATION OF LOG..");
+		//CreateLogFile lf = new CreateLogFile(path_bin,path_git_system, system);
+//		String commandToExecute = "mkdir \""+ path_git_system +"/bin\" | cd \""+ path_git_system +"\" & git log --stat --date iso >./log_"+system+".txt";
+//		// git config diff.renameLimit 999999
+//		// command to execute from command line: git log --stat --date iso >  path_bin/+"log_"+system+".txt"
+//		
+		
+		System.out.println(executeCommand("mkdir \""+ path_bin +"\""));
+		System.out.println(executeCommand("cd \""+ path_bin +"\"")); 
+		System.out.println(executeCommand("git log --stat --date iso > "+system+".txt"));
+		
+		
+//		if(true) {
+	
+		System.out.println("CREATION OF LOG DONE");
+		System.out.println("PARSING LOG..");
+		try {
+			ParsingLog pl = new ParsingLog(path_bin,path_git_system, system);
+		} catch (IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("PARSING LOG DONE");
+	}
 	
 
 }
