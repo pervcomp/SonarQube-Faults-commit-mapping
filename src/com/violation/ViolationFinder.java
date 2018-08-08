@@ -24,6 +24,7 @@ import javax.swing.event.ListSelectionEvent;
 import com.violation.helpers.HashAdder;
 import com.violation.jiraAnalyser.Application;
 import com.violation.logUtils.ParsingLog;
+import com.violation.sqllite.DeltaFileGenerator;
 import com.violation.statistic.CorrelationFileGenerator;
 import com.violation.statistic.StdFileGenerator;
 
@@ -34,10 +35,13 @@ public class ViolationFinder {
 		List<String> projects = getProjectsNames();
 
 		for (String project : projects){
-			System.out.println("Analysing project: " + project);
+			DeltaFileGenerator d = new DeltaFileGenerator(project);
+			
+		}
+		/*	System.out.println("Analysing project: " + project);
 			String sourceCodeRepository = getGitUrl(project);
-			getGitChanges(project);
-		
+			//getGitChanges(project);
+		/*
 			try {
 				Application a = new Application(project, sourceCodeRepository);
 				//Step 1: downloads all jira issues. Step skipped 
@@ -52,18 +56,18 @@ public class ViolationFinder {
 					System.out.println("List Bug Fixing found: step skipped. If you want to regenerate, please cancel them");
 				}
 				else{*/
-					a.mineData();
-					a.calculateBugFixingCommits();
+					/*a.mineData();
+					a.calculateBugFixingCommits();*/
 				//}
 				//Step 3: creates BugInducingCommit File	
 				/*if (existBugInducingCommits(project)){
 					System.out.println("List Bug Inducing found: step skipped. If you want to regenerate, please cancel them");
 				}
 				else{*/
-					a.calculateBugInducingCommits();
+					//a.calculateBugInducingCommits();
 				//}
 				
-				HashAdder ha = new HashAdder( project);
+		/*		HashAdder ha = new HashAdder( project);
 		
 				System.out.print("HashAdder");
 		} catch (MalformedURLException e) {
@@ -85,7 +89,7 @@ public class ViolationFinder {
 		//System.exit(1);
 		System.out.println("Combining to one file");
 		//Step 5: combinates to One-File TOTAL
-		combineCorretionToOneFile();
+		//combineCorretionToOneFile();
 		
 
 		
@@ -108,7 +112,7 @@ public class ViolationFinder {
 		
 		System.out.println("MeasuresCommitsDeltaGenerator");
 		//Step 9: Generator commits with  delta measures file
-		MeasuresCommitsDeltaGenerator mcdf = new MeasuresCommitsDeltaGenerator();
+		MeasuresCommitsDeltaGenerator mcdf = new MeasuresCommitsDeltaGenerator();*/
 		
 	}
 	

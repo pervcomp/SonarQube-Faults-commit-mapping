@@ -22,6 +22,11 @@ public class DeltaFileGenerator {
 	private  String basePath = "extraction/";
 	private List<String> commits = null;
 	private Statement stmt = null;
+	private int countAdded = 0;
+	private int countAddedHistory = 0;
+	private int countRemoved = 0;
+	private int countRemovedHistory = 0;
+
 	
 	public DeltaFileGenerator(String project) {
 		this.project = project;
@@ -112,12 +117,11 @@ public class DeltaFileGenerator {
 		int count = squidsList.size();
 		long startTime = System.currentTimeMillis();
 		for (String squid : squidsList){
-
+			getTotal( squid, measureDate);
 		    count--;
-			finalRow +=  getCountAdded(squid,measureDate) +",";
-			finalRow +=  getCountRemoved(squid,measureDate) +",";
-			finalRow +=  getCountRemoved(squid,measureDate) +",";
-			finalRow +=  getTotal(squid,measureDate) +",";
+			finalRow +=  countAdded +",";
+		    finalRow +=  countRemoved +",";
+			finalRow +=  (countAddedHistory-countRemovedHistory) +",";
 	
 
 		
@@ -177,8 +181,56 @@ public class DeltaFileGenerator {
 	
 	
 	private int getTotal(String rule,String measureDate){
-		return getCountAddedWithHistory(rule,measureDate) - 
-				getCountRemovedWithHistory(rule,measureDate);
+		/*return getCountAddedWithHistory(rule,measureDate) - 
+				getCountRemovedWithHistory(rule,measureDate);*/
+		
+		String sql = "select count(RowNo) from sonar_issues where rule = '"+rule+ "' and "
+				+ "creationDate='"+measureDate+"'and "
+				+ "PROJECT_ID='"+project+"' UNION ALL ";
+			   sql += "select count(RowNo) from sonar_issues where rule = '"+rule+ "' and "
+				+ "closeDate='"+measureDate+"'and "
+				+ "PROJECT_ID='"+project+"' UNION ALL ";
+		      sql += "select count(RowNo) from sonar_issues where rule = '"+rule+ "' and "
+				+ "creationDate<='"+measureDate+"'and "
+				+ "PROJECT_ID='"+project+"' UNION ALL  ";
+		      sql +=   "select count(RowNo) from sonar_issues where rule = '"+rule+ "' and "
+				+ "(closeDate<='"+measureDate+"')and "
+				+ "PROJECT_ID='"+project+"'";
+        ResultSet rs = null;
+        
+        try {
+			stmt = c.createStatement();
+			rs    = stmt.executeQuery(sql);
+			int count = 1;
+			while (rs.next()) {
+				switch (count){
+				case 1: 
+					countAdded = rs.getInt(1);
+					break;
+				case 2:
+					countRemoved = rs.getInt(1);
+					break;
+				case 3: 
+					countAddedHistory = rs.getInt(1);
+					break;
+				case 4:
+					countRemovedHistory = rs.getInt(1);
+					break;
+					
+			
+				}
+				count++;
+	        }
+			/*int countAdded =  rs.getInt(1); 
+			boolean s = rs.next();
+			rs.next();
+			int countRemoved =  rs.getInt(1); 
+	        return (countAdded - countRemoved);*/
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return 0;
 	}
 	
 	
