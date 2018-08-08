@@ -18,16 +18,25 @@ public class DeltaFileGenerator {
 	private SQLiteJDBCDriverConnection connection;
 	private List<String> squidsList;
 	private Connection c = null;
-	private final String fileName = "SONAR_ADDED_REMOVED_ISSUES";
+	private final String fileName = "SONAR_ADDED_REMOVED_ISSUES.csv";
 	private  String basePath = "extraction/";
 	private List<String> commits = null;
+	private Statement stmt = null;
 	
 	public DeltaFileGenerator(String project) {
 		this.project = project;
 		basePath = basePath + project;
 		squidsList = new LinkedList<String>();
+		connection = new SQLiteJDBCDriverConnection ();
 		if (connection.openConnection()){
-			c = connection.getConnection();}
+			c = connection.getConnection();
+			try {
+				stmt = c.createStatement();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		else{
 			c = null;
 			System.out.print("Connection to SonarQube DB LiteSQL failed");
@@ -35,17 +44,21 @@ public class DeltaFileGenerator {
 		}
 		try {
 			try {
-				commits = Files.readAllLines((new File(basePath+"/"+project+"_git-commits.csv")).toPath(), StandardCharsets.ISO_8859_1);
+				commits = Files.readAllLines((new File(basePath+"/git-commits.csv")).toPath(), StandardCharsets.ISO_8859_1);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
-			PrintWriter pw = new PrintWriter ("SONAR_ADDED_REMOVED_ISSUES");
+			PrintWriter pw = new PrintWriter (basePath + "/" + fileName);
 			printHeader(pw);
 			List<String> lines = Files.readAllLines((new File(basePath+"/measure-history.csv")).toPath(), StandardCharsets.ISO_8859_1);
+			lines.remove(0);
+			int count =lines.size();
 			for (String line : lines){
+				System.out.println(project + " missing "+count +" commits");
 				printRow(pw, line );
+				count--;
 			}
 
 			pw.close();
@@ -68,6 +81,7 @@ public class DeltaFileGenerator {
 		String header = "PROJECT-ID, COMMIT_SHA, MEASURE-DATE,";
 		String sql = "SELECT DISTINCT rule "
         		+ "FROM sonar_Issues "
+				+ "WHERE rule like '%squid%'"
         		+ "ORDER by rule";
         Statement stmt = null;
         ResultSet rs = null;
@@ -90,17 +104,27 @@ public class DeltaFileGenerator {
 	
 	private void printRow(PrintWriter pw, String rowMeasure ){
 		String[] array = rowMeasure.split(",");
-		String measureDate = array[0];
+		String measureDate = array[0].replaceAll("\"", "");
 		String commitSha = getCommitSha(measureDate);
 		String finalRow =  project     + "," 
 						 + commitSha   + ","
-						 + measureDate + ","; 		
+						 + measureDate + ",";
+		int count = squidsList.size();
+		long startTime = System.currentTimeMillis();
 		for (String squid : squidsList){
+
+		    count--;
 			finalRow +=  getCountAdded(squid,measureDate) +",";
 			finalRow +=  getCountRemoved(squid,measureDate) +",";
+			finalRow +=  getCountRemoved(squid,measureDate) +",";
 			finalRow +=  getTotal(squid,measureDate) +",";
+	
+
+		
 		}
-		pw.print(finalRow);
+		long end = System.currentTimeMillis();
+		System.out.println(end-startTime);
+		pw.print(finalRow.replace("\"",""));
 	}
 	
 	private String getCommitSha(String measureDate){
@@ -115,15 +139,17 @@ public class DeltaFileGenerator {
 	}
 	
 	private int getCountAdded(String rule,String measureDate){
-		String sql = "select count(*) from sonar_issues where rule like '%"+rule+ "%' and "
+		String sql = "select count(RowNo) from sonar_issues"
+				+ ""
+				+ ""
+				+ " where rule = '"+rule+ "' "+ "and "
 				+ "creationDate='"+measureDate+"'and "
 				+ "PROJECT_ID='"+project+"'";
-		Statement stmt = null;
+		
         ResultSet rs = null;
 		try {
-			stmt = c.createStatement();
 			rs    = stmt.executeQuery(sql);
-			int count =  rs.getInt(0);  
+			int count =  rs.getInt(1);  
 	        return count;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -134,15 +160,13 @@ public class DeltaFileGenerator {
 	
 	
 	private int getCountRemoved(String rule,String measureDate){
-		String sql = "select count(*) from sonar_issues where rule like '%"+rule+ "%' and "
+		String sql = "select count(RowNo) from sonar_issues where rule = '"+rule+ "' and "
 				+ "closeDate='"+measureDate+"'and "
 				+ "PROJECT_ID='"+project+"'";
-		Statement stmt = null;
         ResultSet rs = null;
 		try {
-			stmt = c.createStatement();
 			rs    = stmt.executeQuery(sql);
-			int count =  rs.getInt(0);  
+			int count =  rs.getInt(1);  
 	        return count;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -160,15 +184,14 @@ public class DeltaFileGenerator {
 	
 	
 	private int getCountAddedWithHistory(String rule,String measureDate){
-		String sql = "select count(*) from sonar_issues where rule like '%"+rule+ "%' and "
+		String sql = "select count(RowNo) from sonar_issues where rule = '"+rule+ "' and "
 				+ "creationDate<='"+measureDate+"'and "
 				+ "PROJECT_ID='"+project+"'";
-		Statement stmt = null;
         ResultSet rs = null;
 		try {
 			stmt = c.createStatement();
 			rs    = stmt.executeQuery(sql);
-			int count =  rs.getInt(0);  
+			int count =  rs.getInt(1);  
 	        return count;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -179,15 +202,14 @@ public class DeltaFileGenerator {
 	
 	
 	private int getCountRemovedWithHistory(String rule,String measureDate){
-		String sql = "select count(*) from sonar_issues where rule like '%"+rule+ "%' and "
-				+ "closeDate<='"+measureDate+"'and "
+		String sql = "select count(RowNo) from sonar_issues where rule = '"+rule+ "' and "
+				+ "(closeDate<='"+measureDate+"')and "
 				+ "PROJECT_ID='"+project+"'";
-		Statement stmt = null;
         ResultSet rs = null;
 		try {
 			stmt = c.createStatement();
 			rs    = stmt.executeQuery(sql);
-			int count =  rs.getInt(0);  
+			int count =  rs.getInt(1);  
 	        return count;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
